@@ -1,0 +1,13 @@
+target/
+*.class
+*.war
+*.ear
+.liberty/
+liberty/
+/src/main/liberty/config/configDropins/
+*.iml
+.idea/
+.eclipse/
+.settings/
+.project
+.classpath

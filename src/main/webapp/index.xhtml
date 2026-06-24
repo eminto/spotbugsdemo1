@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>SpotBugs Demo – User List</title>
+</h:head>
+
+<h:body>
+    <h1>SpotBugs Demo – Open Liberty</h1>
+
+    <p>
+        App version: <strong>#{appBean.applicationVersion}</strong> |
+        Total users: <strong>#{appBean.userCount}</strong>
+    </p>
+
+    <h2>Registered Users</h2>
+    <h:dataTable value="#{pageBean.allUsers}" var="user"
+                 border="1" cellpadding="6">
+        <h:column>
+            <f:facet name="header">ID</f:facet>
+            #{user.id}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Username</f:facet>
+            #{user.username}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Email</f:facet>
+            #{user.email}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Registered</f:facet>
+            #{user.registeredOn}
+        </h:column>
+        <h:column>
+            <f:facet name="header">Actions</f:facet>
+            <h:form>
+                <h:commandButton value="Select &amp; Order"
+                                 action="#{pageBean.selectUser(user.id)}" />
+            </h:form>
+        </h:column>
+    </h:dataTable>
+
+    <h:messages globalOnly="true" style="color:red" />
+
+    <p style="margin-top:2em; font-size:0.85em; color:#555">
+        SpotBugs rule enforced: domain objects (User, Order, OrderItem) must implement
+        <code>java.io.Serializable</code> with a declared <code>serialVersionUID</code>.
+        CDI beans (PageBean, AppBean) are excluded from SE_BAD_FIELD via
+        <code>spotbugs/findbugs.xml</code>.
+    </p>
+</h:body>
+</html>

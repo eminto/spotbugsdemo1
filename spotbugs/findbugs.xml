@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    SpotBugs Exclude Filter
+    ═══════════════════════
+    This file tells SpotBugs which bug patterns to IGNORE for specific classes.
+
+    Context
+    ───────
+    Jakarta EE containers require @SessionScoped and @ApplicationScoped CDI beans
+    to implement java.io.Serializable so they can be passivated (serialized) and
+    activated (deserialized) across restarts, fail-overs, or memory-pressure events.
+
+    However, these beans hold @Inject-ed CDI proxy references (e.g. UserService)
+    that are themselves NOT Serializable.  The CDI runtime re-injects fresh proxies
+    after deserialization, so the fields being non-serializable is intentional and safe.
+
+    SpotBugs cannot know this, so it raises false positives in the SE_* category.
+    The two Match blocks below suppress only those patterns, only for those classes.
+
+    Bug pattern reference
+    ─────────────────────
+    SE_NO_SUITABLE_CONSTRUCTOR               – Serializable class has no suitable constructor
+    SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZABLE – Externalizable class missing no-arg ctor
+    SE_BAD_FIELD                             – Non-serializable field in Serializable class
+    SE_BAD_FIELD_STORE                       – Non-serializable value stored in Serializable field
+    SE_BAD_FIELD_INNER_CLASS                 – Non-serializable inner class in Serializable class
+-->
+<FindBugsFilter>
+
+    <Match>
+        <Class name="gov.nystax.ecore.page.PageBean" />
+        <Bug pattern="SE_NO_SUITABLE_CONSTRUCTOR,
+                      SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZABLE,
+                      SE_BAD_FIELD, SE_BAD_FIELD_STORE, SE_BAD_FIELD_INNER_CLASS" />
+    </Match>
+
+    <Match>
+        <Class name="gov.nystax.ecore.app.AppBean" />
+        <Bug pattern="SE_NO_SUITABLE_CONSTRUCTOR,
+                      SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZABLE,
+                      SE_BAD_FIELD, SE_BAD_FIELD_STORE, SE_BAD_FIELD_INNER_CLASS" />
+    </Match>
+
+</FindBugsFilter>
