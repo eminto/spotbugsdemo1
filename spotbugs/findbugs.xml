@@ -24,14 +24,17 @@
     SE_BAD_FIELD                             – Non-serializable field in Serializable class
     SE_BAD_FIELD_STORE                       – Non-serializable value stored in Serializable field
     SE_BAD_FIELD_INNER_CLASS                 – Non-serializable inner class in Serializable class
+    EI_EXPOSE_REP / EI_EXPOSE_REP2          – Mutable object returned/stored (defensive-copy rule)
 -->
 <FindBugsFilter>
 
+    <!-- CDI beans: SE_* are false positives; the container re-injects proxies after passivation -->
     <Match>
         <Class name="gov.nystax.ecore.page.PageBean" />
         <Bug pattern="SE_NO_SUITABLE_CONSTRUCTOR,
                       SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZABLE,
-                      SE_BAD_FIELD, SE_BAD_FIELD_STORE, SE_BAD_FIELD_INNER_CLASS" />
+                      SE_BAD_FIELD, SE_BAD_FIELD_STORE, SE_BAD_FIELD_INNER_CLASS,
+                      EI_EXPOSE_REP, EI_EXPOSE_REP2" />
     </Match>
 
     <Match>
@@ -39,6 +42,23 @@
         <Bug pattern="SE_NO_SUITABLE_CONSTRUCTOR,
                       SE_NO_SUITABLE_CONSTRUCTOR_FOR_EXTERNALIZABLE,
                       SE_BAD_FIELD, SE_BAD_FIELD_STORE, SE_BAD_FIELD_INNER_CLASS" />
+    </Match>
+
+    <!--
+        Domain model classes: EI_EXPOSE_REP / EI_EXPOSE_REP2 are suppressed.
+        These are simple data-holder beans; defensive copying adds no value here
+        and would conflict with the JPA/CDI lifecycle. The SE_BAD_FIELD on
+        OrderItem.product is intentionally NOT suppressed — it is the live
+        demonstration that Product must implement Serializable.
+    -->
+    <Match>
+        <Class name="gov.nystax.ecore.domain.Order" />
+        <Bug pattern="EI_EXPOSE_REP, EI_EXPOSE_REP2" />
+    </Match>
+
+    <Match>
+        <Class name="gov.nystax.ecore.domain.OrderItem" />
+        <Bug pattern="EI_EXPOSE_REP, EI_EXPOSE_REP2" />
     </Match>
 
 </FindBugsFilter>
