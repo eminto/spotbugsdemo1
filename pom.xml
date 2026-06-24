@@ -102,10 +102,10 @@
                     <xmlOutput>true</xmlOutput>
                 </configuration>
                 <executions>
-                    <!-- Bind spotbugs:check to the verify phase so `mvn verify` runs it -->
+                    <!-- Bind spotbugs:check to package so `mvn package` fails on violations -->
                     <execution>
                         <id>spotbugs-check</id>
-                        <phase>verify</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>

@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 /**
  * Domain object representing a single line item within an Order.
  *
- * All fields are Serializable primitive wrappers or BigDecimal –
- * SpotBugs SE_BAD_FIELD will not fire here.
+ * SE_BAD_FIELD DEMO: the 'product' field references Product, which does NOT
+ * implement Serializable. SpotBugs will flag this and fail the build.
  */
 public class OrderItem implements Serializable {
 
@@ -18,11 +18,26 @@ public class OrderItem implements Serializable {
     private int quantity;
     private BigDecimal unitPrice;
 
+    /*
+     * SE_BAD_FIELD: Product is not Serializable.
+     * SpotBugs will fail the build here — domain classes are not in the exclude filter.
+     * Fix: make Product implement Serializable and declare serialVersionUID.
+     */
+    private Product product;
+
     public OrderItem() {}
 
     public OrderItem(Long id, String productName, int quantity, BigDecimal unitPrice) {
         this.id = id;
         this.productName = productName;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
+
+    public OrderItem(Long id, Product product, int quantity, BigDecimal unitPrice) {
+        this.id = id;
+        this.product = product;
+        this.productName = product.getName();
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
@@ -33,6 +48,9 @@ public class OrderItem implements Serializable {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
 
     public String getProductName() { return productName; }
     public void setProductName(String productName) { this.productName = productName; }
