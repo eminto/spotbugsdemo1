@@ -9,21 +9,32 @@
     <groupId>com.thom.core</groupId>
     <artifactId>spotbugsdemo</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
-    <name>SpotBugs Demo – Serialization Detection</name>
+    <name>SpotBugs Demo – Open Liberty Hello World</name>
     <description>
-        Plain Java project demonstrating SpotBugs serialization rules.
-        Classes implementing AppBean/PageBean must be Serializable; SpotBugs
-        checks fields, collection contents, and parent class chains.
+        Minimal Open Liberty WAR project demonstrating SpotBugs serialization enforcement.
+        SpotBugs runs during the package phase and fails the build when SE_BAD_FIELD,
+        SE_NO_SUITABLE_CONSTRUCTOR, or SE_NO_SERIALVERSIONID violations are found.
     </description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <liberty.var.http.port>9080</liberty.var.http.port>
+        <liberty.var.https.port>9443</liberty.var.https.port>
     </properties>
 
     <dependencies>
+        <!-- Jakarta EE 10 API (provided by Open Liberty at runtime) -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>10.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- SpotBugs annotations (@SuppressFBWarnings) -->
         <dependency>
             <groupId>com.github.spotbugs</groupId>
@@ -42,7 +53,15 @@
     </dependencies>
 
     <build>
+        <finalName>spotbugsdemo</finalName>
         <plugins>
+
+            <!-- Maven WAR Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
 
             <!-- Surefire for JUnit 5 -->
             <plugin>
@@ -52,10 +71,12 @@
             </plugin>
 
             <!--
-                SpotBugs Maven Plugin
-                Run:  mvn spotbugs:check   – fails build on violations not in the filter
-                      mvn spotbugs:gui     – opens the SpotBugs GUI
-                      mvn spotbugs:spotbugs – generates the XML report only
+                SpotBugs Maven Plugin – bound to the package phase so that
+                `mvn package` fails immediately when serialization violations are found.
+
+                Only the rules listed in spotbugs/findbugs.xml (include filter) are enforced:
+                  SE_BAD_FIELD, SE_NO_SUITABLE_CONSTRUCTOR,
+                  SE_NO_SERIALVERSIONID, SE_BAD_FIELD_STORE
             -->
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
@@ -65,19 +86,28 @@
                     <includeFilterFile>spotbugs/findbugs.xml</includeFilterFile>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
-                    <!-- Set to true to fail build when bugs are found -->
                     <failOnError>true</failOnError>
                     <xmlOutput>true</xmlOutput>
                 </configuration>
                 <executions>
                     <execution>
                         <id>spotbugs-check</id>
-                        <phase>verify</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Open Liberty Maven Plugin -->
+            <plugin>
+                <groupId>io.openliberty.tools</groupId>
+                <artifactId>liberty-maven-plugin</artifactId>
+                <version>3.10.3</version>
+                <configuration>
+                    <serverName>spotbugsdemoServer</serverName>
+                </configuration>
             </plugin>
 
         </plugins>
