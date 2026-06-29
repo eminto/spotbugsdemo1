@@ -1,9 +1,8 @@
-package gov.nystax.ecore.service;
+package com.thom.core.service;
 
-import gov.nystax.ecore.domain.Order;
-import gov.nystax.ecore.domain.OrderItem;
-import gov.nystax.ecore.domain.User;
-import jakarta.enterprise.context.ApplicationScoped;
+import com.thom.core.domain.Order;
+import com.thom.core.domain.OrderItem;
+import com.thom.core.domain.User;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,23 +10,16 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Application-scoped CDI service bean.
- *
- * Intentionally does NOT implement Serializable – it is an ApplicationScoped bean
- * managed by the container and is never passivated.
- *
- * When PageBean (SessionScoped) holds a reference to this bean via @Inject,
- * SpotBugs flags SE_BAD_FIELD because UserService is not Serializable.
- * That warning is suppressed via spotbugs/findbugs.xml for PageBean.
+ * Plain Java service class. Intentionally does NOT implement Serializable.
+ * When held as a field in a Serializable class (AppBeanImpl, PageBeanImpl),
+ * SpotBugs raises SE_BAD_FIELD.
  */
-@ApplicationScoped
 public class UserService {
 
     private final AtomicLong idSequence = new AtomicLong(1);
     private final List<User> store = new ArrayList<>();
 
     public UserService() {
-        // Seed some demo data
         store.add(new User(idSequence.getAndIncrement(), "alice", "alice@example.com"));
         store.add(new User(idSequence.getAndIncrement(), "bob",   "bob@example.com"));
     }

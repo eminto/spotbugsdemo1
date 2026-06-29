@@ -1,4 +1,4 @@
-package gov.nystax.ecore.domain;
+package com.thom.core.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * Domain object representing a single line item within an Order.
  *
  * SE_BAD_FIELD DEMO: the 'product' field references Product, which does NOT
- * implement Serializable. SpotBugs will flag this and fail the build.
+ * implement Serializable. SpotBugs will flag this.
  */
 public class OrderItem implements Serializable {
 
@@ -20,8 +20,7 @@ public class OrderItem implements Serializable {
 
     /*
      * SE_BAD_FIELD: Product is not Serializable.
-     * SpotBugs will fail the build here — domain classes are not in the exclude filter.
-     * Fix: make Product implement Serializable and declare serialVersionUID.
+     * SpotBugs flags this because OrderItem IS Serializable and holds a Product field.
      */
     private Product product;
 

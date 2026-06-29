@@ -1,8 +1,8 @@
-package gov.nystax.ecore;
+package com.thom.core;
 
-import gov.nystax.ecore.domain.Order;
-import gov.nystax.ecore.domain.OrderItem;
-import gov.nystax.ecore.domain.User;
+import com.thom.core.domain.Order;
+import com.thom.core.domain.OrderItem;
+import com.thom.core.domain.User;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;

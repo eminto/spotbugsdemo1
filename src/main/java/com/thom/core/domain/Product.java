@@ -1,4 +1,4 @@
-package gov.nystax.ecore.domain;
+package com.thom.core.domain;
 
 import java.math.BigDecimal;
 
@@ -7,12 +7,9 @@ import java.math.BigDecimal;
  *
  * INTENTIONALLY does NOT implement java.io.Serializable.
  *
- * This simulates a developer forgetting (or choosing not) to satisfy the
- * project's rule that all domain objects must be Serializable.
- *
  * SpotBugs detects this indirectly: OrderItem IS Serializable and holds a
- * Product field, triggering SE_BAD_FIELD. Because domain classes are not
- * listed in spotbugs/findbugs.xml, failOnError=true causes BUILD FAILURE.
+ * Product field, triggering SE_BAD_FIELD. PageBeanImpl also holds a
+ * List<Product>, which SpotBugs flags for the same reason.
  *
  * Fix: add "implements Serializable" and declare serialVersionUID.
  */

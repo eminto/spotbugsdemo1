@@ -6,36 +6,24 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.nystax.ecore</groupId>
+    <groupId>com.thom.core</groupId>
     <artifactId>spotbugsdemo</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
 
-    <name>SpotBugs Demo – Open Liberty</name>
+    <name>SpotBugs Demo – Serialization Detection</name>
     <description>
-        Demonstrates SpotBugs serialization rules in a Jakarta EE / Open Liberty project.
-        Domain objects must implement Serializable correctly. CDI session-scoped beans that
-        carry non-serializable injected fields are excluded from SE_* checks via findbugs.xml.
+        Plain Java project demonstrating SpotBugs serialization rules.
+        Classes implementing AppBean/PageBean must be Serializable; SpotBugs
+        checks fields, collection contents, and parent class chains.
     </description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <liberty.var.http.port>9080</liberty.var.http.port>
-        <liberty.var.https.port>9443</liberty.var.https.port>
     </properties>
 
     <dependencies>
-        <!-- Jakarta EE 10 API (provided by Open Liberty at runtime) -->
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>10.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- SpotBugs annotations (@SuppressFBWarnings) -->
         <dependency>
             <groupId>com.github.spotbugs</groupId>
@@ -44,7 +32,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JUnit 5 for serialization unit tests -->
+        <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -54,15 +42,7 @@
     </dependencies>
 
     <build>
-        <finalName>spotbugsdemo</finalName>
         <plugins>
-
-            <!-- Maven WAR Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-            </plugin>
 
             <!-- Surefire for JUnit 5 -->
             <plugin>
@@ -82,45 +62,22 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.8.6.2</version>
                 <configuration>
-                    <!--
-                        Exclude filter: CDI-managed beans (PageBean, AppBean) implement
-                        Serializable for container passivation, but their injected fields
-                        are not serializable. These patterns are expected and suppressed.
-                    -->
-                    <excludeFilterFile>spotbugs/findbugs.xml</excludeFilterFile>
-
-                    <!-- Raise the analysis effort for a thorough scan -->
+                    <includeFilterFile>spotbugs/findbugs.xml</includeFilterFile>
                     <effort>Max</effort>
-
-                    <!-- Report all bug categories -->
                     <threshold>Low</threshold>
-
-                    <!-- Fail the build when unfilterable bugs are found -->
+                    <!-- Set to true to fail build when bugs are found -->
                     <failOnError>true</failOnError>
-
-                    <!-- Include the generated XML report in the site -->
                     <xmlOutput>true</xmlOutput>
                 </configuration>
                 <executions>
-                    <!-- Bind spotbugs:check to package so `mvn package` fails on violations -->
                     <execution>
                         <id>spotbugs-check</id>
-                        <phase>package</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Open Liberty Maven Plugin -->
-            <plugin>
-                <groupId>io.openliberty.tools</groupId>
-                <artifactId>liberty-maven-plugin</artifactId>
-                <version>3.10.3</version>
-                <configuration>
-                    <serverName>spotbugsdemoServer</serverName>
-                </configuration>
             </plugin>
 
         </plugins>
@@ -133,7 +90,7 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.8.6.2</version>
                 <configuration>
-                    <excludeFilterFile>spotbugs/findbugs.xml</excludeFilterFile>
+                    <includeFilterFile>spotbugs/findbugs.xml</includeFilterFile>
                 </configuration>
             </plugin>
         </plugins>

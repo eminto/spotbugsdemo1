@@ -1,4 +1,4 @@
-package gov.nystax.ecore.domain;
+package com.thom.core.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
